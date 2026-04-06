@@ -1,0 +1,9 @@
+tunnel: ${tunnel_id}
+credentials-file: ${credentials_file}
+
+ingress:
+%{ for item in ingress ~}
+  - hostname: ${item.hostname}
+    service: ${item.service}
+%{ endfor ~}
+  - service: http_status:404

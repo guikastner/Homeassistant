@@ -1,0 +1,141 @@
+variable "docker_host" {
+  description = "Docker host socket URL. Keep default for local Docker engine."
+  type        = string
+  default     = "unix:///var/run/docker.sock"
+}
+
+variable "base_domain" {
+  description = "Base domain used to build Cloudflare CNAMEs for published services (e.g. example.com)."
+  type        = string
+  default     = ""
+}
+
+variable "timezone" {
+  description = "Timezone applied to containers that support TZ."
+  type        = string
+  default     = "UTC"
+}
+
+variable "name_prefix" {
+  description = "Optional prefix applied to all container names, hostnames, and data directories (e.g., \"lab-\")."
+  type        = string
+  default     = ""
+}
+
+variable "network_name" {
+  description = "Docker network name used to connect all project containers."
+  type        = string
+}
+
+variable "node_red_name" {
+  description = "Base name for the single Node-RED container (prefix will be prepended)."
+  type        = string
+  default     = "node1"
+}
+
+variable "home_assistant_name" {
+  description = "Base name for the Home Assistant container (prefix will be prepended)."
+  type        = string
+  default     = "homeassistant1"
+}
+
+variable "home_assistant_hostname" {
+  description = "Optional public hostname prefix for Home Assistant. When empty, the container name is used."
+  type        = string
+  default     = ""
+}
+
+variable "home_assistant_trusted_proxies" {
+  description = "Trusted reverse-proxy CIDRs/IPs for Home Assistant when running behind Cloudflare Tunnel."
+  type        = list(string)
+  default     = ["172.17.0.0/16"]
+}
+
+variable "home_assistant_image" {
+  description = "Container image for Home Assistant."
+  type        = string
+  default     = "homeassistant/home-assistant:stable"
+}
+
+variable "home_assistant_capabilities_add" {
+  description = "Linux capabilities added to the Home Assistant container for local device integrations."
+  type        = list(string)
+  default     = ["NET_ADMIN", "NET_RAW"]
+}
+
+variable "node_red_image" {
+  description = "Container image for Node-RED."
+  type        = string
+  default     = "nodered/node-red:4.1.4-22"
+}
+
+variable "node_red_hostname" {
+  description = "Optional public hostname prefix for Node-RED. When empty, the container name is used."
+  type        = string
+  default     = ""
+}
+
+variable "cloudflared_image" {
+  description = "Container image for Cloudflare Tunnel agent."
+  type        = string
+  default     = "cloudflare/cloudflared:latest"
+}
+
+variable "node_red_admin_username" {
+  description = "Admin username for Node-RED editor (basic auth)."
+  type        = string
+  default     = "admin"
+}
+
+variable "node_red_admin_password" {
+  description = "Plain-text password for the Node-RED admin user. The bcrypt hash is generated during deployment."
+  type        = string
+  sensitive   = true
+}
+
+variable "node_red_credential_secret" {
+  description = "Secret used by Node-RED to encrypt flow credentials (credentialSecret)."
+  type        = string
+  default     = "credential-secret"
+  sensitive   = true
+}
+
+variable "node_red_extra_modules" {
+  description = "List of npm packages (names or URLs) to install into each Node-RED data dir."
+  type        = list(string)
+  default = [
+    "https://btcc.s3.dualstack.eu-west-1.amazonaws.com/widget-lab/npm/node-red-contrib-3dxinterfaces/dist/widget-lab-node-red-contrib-3dxinterfaces-6.5.1.tgz",
+    "node-red-contrib-xlsx-to-json",
+  ]
+}
+
+variable "delete_data_on_destroy" {
+  description = "If true, persistent bind-mount directories and generated local build artifacts are deleted on destroy."
+  type        = bool
+  default     = true
+}
+
+variable "cloudflare_api_token" {
+  description = "API token with permissions to manage tunnels and DNS records."
+  type        = string
+  sensitive   = true
+}
+
+variable "cloudflare_zone_id" {
+  description = "Zone ID in Cloudflare where CNAMEs will be created."
+  type        = string
+}
+
+variable "cloudflare_proxied" {
+  description = "Whether created DNS records should be proxied by Cloudflare."
+  type        = bool
+  default     = true
+}
+
+variable "cloudflare_tunnel" {
+  description = "Cloudflare tunnel settings and secrets."
+  type = object({
+    name       = string
+    account_id = string
+  })
+}

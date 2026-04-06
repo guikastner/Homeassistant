@@ -1,0 +1,30 @@
+module.exports = {
+  uiPort: process.env.PORT || 1880,
+  flowFile: "flows.json",
+  flowFilePretty: true,
+  credentialSecret: "${credential_secret}",
+  userDir: "/data",
+  diagnostics: {
+    enabled: true,
+    ui: true,
+  },
+  runtimeState: {
+    enabled: false,
+    ui: false,
+  },
+  editorTheme: {
+    projects: {
+      enabled: false,
+    },
+  },
+  adminAuth: {
+    type: "credentials",
+    users: [
+      {
+        username: "${admin_user}",
+        password: "${admin_pass_hash}",
+        permissions: "*",
+      },
+    ],
+  },
+};

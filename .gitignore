@@ -1,0 +1,41 @@
+# OpenTofu working directory
+.terraform/
+
+# State files
+*.tfstate
+*.tfstate.*
+*.hcl
+
+# Variable definitions with secrets/local overrides
+*.tfvars
+*.tfvars.json
+*.auto.tfvars
+*.auto.tfvars.json
+
+# CLI config and crash logs
+crash.log
+crash.*.log
+.terraformrc
+terraform.rc
+
+# Override files
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Generated local artifacts
+build/
+
+# Local environment / secret files
+.env
+.env.*
+*.env
+*.local
+secrets.*
+
+# Common private key / certificate files
+*.pem
+*.key
+*.p12
+*.pfx
