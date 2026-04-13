@@ -1,22 +1,63 @@
-# Copy to terraform.tfvars and fill with real values (do not commit secrets).
-base_domain                 = ""
-timezone                    = ""
-name_prefix                 = ""
-network_name                = ""
-delete_data_on_destroy      = true
-home_assistant_name         = ""
-home_assistant_hostname     = ""
-home_assistant_trusted_proxies = []
-home_assistant_bluetooth_enabled = true
-home_assistant_dbus_host_path   = "/run/dbus"
-node_red_hostname           = ""
-node_red_admin_password     = ""
-node_red_credential_secret  = ""
-node_red_extra_modules      = []
-cloudflare_api_token        = ""
-cloudflare_zone_id          = ""
+# Copy this file to `terraform.tfvars`, fill in the real values, and keep that file out of version control.
 
+# Base domain used to publish Home Assistant and Node-RED through Cloudflare.
+base_domain = "example.com"
+
+# Timezone injected into supported containers.
+timezone = "America/Sao_Paulo"
+
+# Optional prefix applied to container names, hostnames, and data directories.
+name_prefix = "home-"
+
+# Shared Docker network name for the project containers.
+network_name = "home"
+
+# When true, `tofu destroy` also removes persistent bind mounts and generated files.
+delete_data_on_destroy = true
+
+# Base Home Assistant container name. Final name is `name_prefix + home_assistant_name`.
+home_assistant_name = "homeassistant1"
+
+# Public hostname label for Home Assistant. Final FQDN becomes `homeassistant.example.com`.
+home_assistant_hostname = "homeassistant"
+
+# Trusted reverse proxy CIDRs/IPs written into Home Assistant configuration.
+home_assistant_trusted_proxies = [
+  "172.17.0.0/16",
+]
+
+# Enable Bluetooth support by mounting the host D-Bus runtime into the Home Assistant container.
+home_assistant_bluetooth_enabled = true
+
+# Host path mounted as `/run/dbus` inside Home Assistant.
+# Keep the default unless your host exposes the system bus somewhere else.
+home_assistant_dbus_host_path = "/run/dbus"
+
+# Public hostname label for Node-RED. Final FQDN becomes `node-red.example.com`.
+node_red_hostname = "node-red"
+
+# Node-RED admin password used to generate the bcrypt hash during deploy.
+node_red_admin_password = "change-me"
+
+# Secret used by Node-RED to encrypt stored credentials.
+node_red_credential_secret = "change-this-secret"
+
+# Optional extra Node-RED modules installed before the container starts.
+node_red_extra_modules = [
+  "node-red-contrib-home-assistant-websocket",
+]
+
+# Cloudflare token with permissions to manage tunnels and DNS records.
+cloudflare_api_token = "CLOUDFLARE_API_TOKEN"
+
+# Cloudflare zone ID where the public DNS records will be created.
+cloudflare_zone_id = "CLOUDFLARE_ZONE_ID"
+
+# Cloudflare Tunnel settings.
 cloudflare_tunnel = {
-  name       = ""
-  account_id = ""
+  # Human-readable tunnel name.
+  name = "homeassistant-tunnel"
+
+  # Cloudflare account ID that owns the tunnel.
+  account_id = "CLOUDFLARE_ACCOUNT_ID"
 }
