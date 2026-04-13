@@ -6,7 +6,8 @@ resource "docker_container" "home_assistant" {
   network_mode = "host"
 
   env = [
-    "TZ=${var.timezone}"
+    "TZ=${var.timezone}",
+    "DBUS_SYSTEM_BUS_ADDRESS=unix:path=/run/dbus/system_bus_socket",
   ]
 
   mounts {
@@ -20,6 +21,17 @@ resource "docker_container" "home_assistant" {
     source    = local.home_assistant_config_path
     type      = "bind"
     read_only = true
+  }
+
+  dynamic "mounts" {
+    for_each = var.home_assistant_bluetooth_enabled ? [1] : []
+
+    content {
+      target    = "/run/dbus"
+      source    = var.home_assistant_dbus_host_path
+      type      = "bind"
+      read_only = true
+    }
   }
 
   capabilities {

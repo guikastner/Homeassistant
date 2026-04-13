@@ -63,6 +63,18 @@ variable "home_assistant_capabilities_add" {
   default     = ["NET_ADMIN", "NET_RAW"]
 }
 
+variable "home_assistant_bluetooth_enabled" {
+  description = "Expose host D-Bus to the Home Assistant container so BlueZ/Bluetooth integrations can talk to the host adapter."
+  type        = bool
+  default     = true
+}
+
+variable "home_assistant_dbus_host_path" {
+  description = "Host path for the system D-Bus runtime mounted into Home Assistant when Bluetooth support is enabled."
+  type        = string
+  default     = "/run/dbus"
+}
+
 variable "node_red_image" {
   description = "Container image for Node-RED."
   type        = string

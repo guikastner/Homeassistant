@@ -23,6 +23,7 @@ Infrastructure as code to provision a base stack for Home Assistant and Node-RED
 - Cloudflare creates a dedicated hostname for Home Assistant through the same tunnel used by Node-RED. The public label can be overridden with `home_assistant_hostname`.
 - Cloudflare reaches Home Assistant through the host network endpoint on port `8123`.
 - The container adds `NET_ADMIN` and `NET_RAW` by default to improve local Bluetooth/device integrations.
+- Bluetooth support is enabled by default by bind-mounting the host `dbus` runtime (`/run/dbus`) into the container and exporting `DBUS_SYSTEM_BUS_ADDRESS`, which lets Home Assistant talk to the host BlueZ adapter.
 
 ## Node-RED security
 - Admin auth uses `node_red_admin_username` and the plain-text `node_red_admin_password`; the bcrypt hash is generated during deployment and written into the rendered `settings.js`.
@@ -61,6 +62,8 @@ Supply real values in `terraform.tfvars` (keep it out of version control). Below
 | `delete_data_on_destroy` | When `true`, `tofu destroy` also removes persistent bind mounts and generated local files. | `true` |
 | `home_assistant_hostname` | Optional public hostname label for Home Assistant. | `homeassistant` |
 | `home_assistant_trusted_proxies` | Trusted proxy CIDRs/IPs written into Home Assistant HTTP config. | `["172.17.0.0/16"]` |
+| `home_assistant_bluetooth_enabled` | Mount the host `dbus` runtime into Home Assistant for Bluetooth/BlueZ integrations. | `true` |
+| `home_assistant_dbus_host_path` | Host path mounted as `/run/dbus` when Bluetooth support is enabled. | `/run/dbus` |
 | `node_red_admin_password` | Plain-text password for the Node-RED admin user. The hash is generated during deploy. | `change-me-too` |
 | `node_red_credential_secret` | Secret to encrypt Node-RED credentials. | `set-your-own-secret` |
 | `node_red_hostname` | Optional public hostname label for Node-RED. | `node-red` |
@@ -91,6 +94,7 @@ Supply real values in `terraform.tfvars` (keep it out of version control). Below
   - Home Assistant: `host` network mode for LAN/device discovery.
   - Node-RED: `network_name` (private service traffic) + `bridge` (outbound internet).
   - Cloudflared: `network_name` + `bridge`, with `host.docker.internal` mapped to the host gateway for Home Assistant ingress.
+- Bluetooth on Home Assistant depends on the host OS running BlueZ and exposing the system D-Bus socket under `/run/dbus/system_bus_socket`.
 - Home Assistant and Node-RED data are stored in bind mounts under `/DATA/AppData/<name>` to persist across container recreations.
 - `tofu destroy` also removes those bind mounts and the generated `build/` files when `delete_data_on_destroy = true`.
 - Home Assistant startup depends on OpenTofu-generated config plus placeholder include files (`automations.yaml`, `scripts.yaml`, `scenes.yaml`, `themes/`) so the first boot works without manual file creation.
